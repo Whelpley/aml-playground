@@ -1,0 +1,11 @@
+{
+  "name": "aml-playground",
+  "version": "1.0.0",
+  "description": "Experimentation zone for Amazon Machine Learning",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Michael Whelpley",
+  "license": "ISC"
+}
