@@ -242,7 +242,7 @@ machinelearning.updateMLModel(params, function(err, data) {
 
 // Step 5: Use the ML Model to Generate Predictions
 
-//calling a Batch Prediction (from docs):
+//calling a new Batch Prediction (from docs):
 var params = {
   BatchPredictionDataSourceId: 'STRING_VALUE', /* required */
   BatchPredictionId: 'STRING_VALUE', /* required */
@@ -254,5 +254,25 @@ machinelearning.createBatchPrediction(params, function(err, data) {
   if (err) console.log(err, err.stack); // an error occurred
   else     console.log(data);           // successful response
 });
+
+// checking out an existing Batch Prediction (docs)
+var params = {
+  BatchPredictionId: 'STRING_VALUE' /* required */
+};
+machinelearning.getBatchPrediction(params, function(err, data) {
+  if (err) console.log(err, err.stack); // an error occurred
+  else     console.log(data);           // successful response
+});
+
+// Creating a Real-Time endpoint (docs):
+// WARNING: charges accumulate by the hour while active (though still cheap)
+var params = {
+  MLModelId: 'STRING_VALUE' /* required */
+};
+machinelearning.createRealtimeEndpoint(params, function(err, data) {
+  if (err) console.log(err, err.stack); // an error occurred
+  else     console.log(data);           // successful response
+});
+
 
 // Step 6: Clean Up
