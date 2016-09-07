@@ -3,9 +3,7 @@ var AWS = require('aws-sdk');
 AWS.config.loadFromPath('./config.json');
 
 // DANGER! hard-coded credentials DELETE THIS KEY
-var s3 = new AWS.S3(
-
-);
+var s3 = new AWS.S3();
 
  s3.createBucket({Bucket: 'myBucketwowdoge'}, function() {
 
