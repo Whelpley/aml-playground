@@ -1,11 +1,12 @@
 // this program will follow the Amazon Machine Learning tutorial at http://docs.aws.amazon.com/machine-learning/latest/dg/tutorial.html , and enact each step in Node
 
 var AWS = require('aws-sdk'),
-    fs = require('fs'),
-    s3 = new AWS.S3(),
-    machinelearning = new AWS.MachineLearning();;
+    fs = require('fs');
 
 AWS.config.loadFromPath('./config.json');
+
+var s3 = new AWS.S3(),
+    machinelearning = new AWS.MachineLearning();
 
 // Step 1: Prepare Your Data
 
@@ -54,10 +55,10 @@ s3.createBucket({Bucket: 'aml-tutorial-emulation-files'}, function() {
 // Step 2: Create a Training Datasource
 
 var create_data_source_params = {
-  DataSourceId: 'Banking Data Source ID',
+  DataSourceId: 'Banking-Data-Source-ID',
   // A user-supplied identifier that uniquely identifies the DataSource.
   DataSpec: {
-    DataLocationS3: 's3://' + banking_params.Bucket + "/banking.csv",
+    DataLocationS3: 's3://aml-tutorial-emulation-files/banking.csv' ,
      // The Amazon S3 location of the observation data.
      // !!! Not sure if this is the correct format !!!
     DataRearrangement: JSON.stringify({
@@ -178,11 +179,12 @@ var create_data_source_params = {
   },
   ComputeStatistics: true,
   // necessary to get useful data later
-  DataSourceName: 'Banking Data Souce Name'
+  DataSourceName: 'Banking-Data-Souce-Name'
   // A user-supplied name or description of the DataSource.
   // ? How is this different from the DataSourceID ?
 };
 
+//this call may need to be nested after the initial S3 bucket load
 machinelearning.createDataSourceFromS3(create_data_source_params, function(err, data) {
   if (err) console.log(err, err.stack);
   else     console.log(data);
