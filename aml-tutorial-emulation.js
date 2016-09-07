@@ -54,6 +54,10 @@ s3.createBucket({Bucket: 'aml-tutorial-emulation-files'}, function() {
    });
 });
 
+// all above code currently working
+// ---
+// all below code, not so much
+
 // Step 2: Create a Training Datasource
 
 var create_data_source_params = {
@@ -197,15 +201,20 @@ machinelearning.createDataSourceFromS3(create_data_source_params, function(err, 
 //creating a ML Learning Model (from docs):
 var params = {
   MLModelId: 'STRING_VALUE', /* required */
+  // A user-supplied ID that uniquely identifies the MLModel.
   MLModelType: 'REGRESSION | BINARY | MULTICLASS', /* required */
+  // Classification option; aka: numeric value | 1 or 0 | limited set
   TrainingDataSourceId: 'STRING_VALUE', /* required */
+  // from step 2
   MLModelName: 'STRING_VALUE',
+  // A user-supplied name or description of the MLModel.
   Parameters: {
-    someKey: 'STRING_VALUE',
-    /* anotherKey: ... */
+    someKey: 'STRING_VALUE'
+    // see docs for options
   },
   Recipe: 'STRING_VALUE',
   RecipeUri: 'STRING_VALUE'
+  // choose one of the 2 above, otherwise AML creates a default
 };
 machinelearning.createMLModel(params, function(err, data) {
   if (err) console.log(err, err.stack); // an error occurred
@@ -220,20 +229,39 @@ machinelearning.createMLModel(params, function(err, data) {
 // calling up an Evaluation (from docs):
 var params = {
   EvaluationDataSourceId: 'STRING_VALUE', /* required */
+  // The ID of the DataSource for the evaluation. Schema must match the MLModelID's (below) schema
   EvaluationId: 'STRING_VALUE', /* required */
+  // A user-supplied ID that uniquely identifies the Evaluation.
   MLModelId: 'STRING_VALUE', /* required */
+  // The ID of the MLModel to evaluate.
   EvaluationName: 'STRING_VALUE'
+  // A user-supplied name or description of the Evaluation.
 };
 machinelearning.createEvaluation(params, function(err, data) {
   if (err) console.log(err, err.stack); // an error occurred
   else     console.log(data);           // successful response
 });
 
+// getting an Evaluation that has been completed
+var params = {
+  EvaluationId: 'STRING_VALUE' /* required */
+  // The ID of the Evaluation to retrieve.
+};
+machinelearning.getEvaluation(params, function(err, data) {
+  if (err) console.log(err, err.stack); // an error occurred
+  else     console.log(data);           // successful response
+});
+
 //to update the score Threshold (from docs):
+// will want to run another Evaluation after updating Threshold
 var params = {
   MLModelId: 'STRING_VALUE', /* required */
+  // The ID assigned to the MLModel during creation.
   MLModelName: 'STRING_VALUE',
-  ScoreThreshold: 0.0
+  // A user-supplied name or description of the MLModel.
+  ScoreThreshold: 0.5
+  // set higher = stricter, more false negatives
+  // set lower = looser, more false positives
 };
 machinelearning.updateMLModel(params, function(err, data) {
   if (err) console.log(err, err.stack); // an error occurred
@@ -245,10 +273,15 @@ machinelearning.updateMLModel(params, function(err, data) {
 //calling a new Batch Prediction (from docs):
 var params = {
   BatchPredictionDataSourceId: 'STRING_VALUE', /* required */
+  // The ID of the DataSource that points to the group of observations to predict.
   BatchPredictionId: 'STRING_VALUE', /* required */
+  // A user-supplied ID that uniquely identifies the BatchPrediction.
   MLModelId: 'STRING_VALUE', /* required */
+  // The ID of the MLModel that will generate predictions for the group of observations.
   OutputUri: 'STRING_VALUE', /* required */
+  // The location of an S3 bucket or directory to store the batch prediction results. (permissions required)
   BatchPredictionName: 'STRING_VALUE'
+  // user-supplied name or description of the BatchPrediction
 };
 machinelearning.createBatchPrediction(params, function(err, data) {
   if (err) console.log(err, err.stack); // an error occurred
@@ -258,6 +291,7 @@ machinelearning.createBatchPrediction(params, function(err, data) {
 // checking out an existing Batch Prediction (docs)
 var params = {
   BatchPredictionId: 'STRING_VALUE' /* required */
+  // An ID assigned to the BatchPrediction at creation.
 };
 machinelearning.getBatchPrediction(params, function(err, data) {
   if (err) console.log(err, err.stack); // an error occurred
@@ -265,14 +299,21 @@ machinelearning.getBatchPrediction(params, function(err, data) {
 });
 
 // Creating a Real-Time endpoint (docs):
-// WARNING: charges accumulate by the hour while active (though still cheap)
+// WARNING: charges accumulate by the hour (as well as by-request) while active (though still cheap overall)
 var params = {
   MLModelId: 'STRING_VALUE' /* required */
+  // The ID assigned to the MLModel during creation.
 };
 machinelearning.createRealtimeEndpoint(params, function(err, data) {
   if (err) console.log(err, err.stack); // an error occurred
   else     console.log(data);           // successful response
 });
 
+// ??? How do we enter real-time prediction queries?
+// ??? Does an entry point also appear at the endpoint?
 
 // Step 6: Clean Up
+
+// Delete functions exist for each object that was created
+// Only essential one to delete is Real-Time Endpoint, as it accumulates charges by the hour
+
