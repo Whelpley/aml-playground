@@ -1,4 +1,6 @@
-// this program will follow the Amazon Machine Learning tutorial at http://docs.aws.amazon.com/machine-learning/latest/dg/tutorial.html , and enact each step in Node
+// This program will follow the Amazon Machine Learning tutorial at http://docs.aws.amazon.com/machine-learning/latest/dg/tutorial.html , and enact each step in Node
+
+// currently in skeleton status, not able to be run
 
 var AWS = require('aws-sdk'),
     fs = require('fs');
@@ -189,3 +191,68 @@ machinelearning.createDataSourceFromS3(create_data_source_params, function(err, 
   if (err) console.log(err, err.stack);
   else     console.log(data);
 });
+
+//Step 3: Create a Machine Learning Model
+
+//creating a ML Learning Model (from docs):
+var params = {
+  MLModelId: 'STRING_VALUE', /* required */
+  MLModelType: 'REGRESSION | BINARY | MULTICLASS', /* required */
+  TrainingDataSourceId: 'STRING_VALUE', /* required */
+  MLModelName: 'STRING_VALUE',
+  Parameters: {
+    someKey: 'STRING_VALUE',
+    /* anotherKey: ... */
+  },
+  Recipe: 'STRING_VALUE',
+  RecipeUri: 'STRING_VALUE'
+};
+machinelearning.createMLModel(params, function(err, data) {
+  if (err) console.log(err, err.stack); // an error occurred
+  else     console.log(data);           // successful response
+});
+
+// ???: if you chain asynchronous methods off the same object, will each method wait until the previous is completed?
+
+
+// Step 4: Review the ML Model's Predictive Performance and Set a Score Threshold
+
+// calling up an Evaluation (from docs):
+var params = {
+  EvaluationDataSourceId: 'STRING_VALUE', /* required */
+  EvaluationId: 'STRING_VALUE', /* required */
+  MLModelId: 'STRING_VALUE', /* required */
+  EvaluationName: 'STRING_VALUE'
+};
+machinelearning.createEvaluation(params, function(err, data) {
+  if (err) console.log(err, err.stack); // an error occurred
+  else     console.log(data);           // successful response
+});
+
+//to update the score Threshold (from docs):
+var params = {
+  MLModelId: 'STRING_VALUE', /* required */
+  MLModelName: 'STRING_VALUE',
+  ScoreThreshold: 0.0
+};
+machinelearning.updateMLModel(params, function(err, data) {
+  if (err) console.log(err, err.stack); // an error occurred
+  else     console.log(data);           // successful response
+});
+
+// Step 5: Use the ML Model to Generate Predictions
+
+//calling a Batch Prediction (from docs):
+var params = {
+  BatchPredictionDataSourceId: 'STRING_VALUE', /* required */
+  BatchPredictionId: 'STRING_VALUE', /* required */
+  MLModelId: 'STRING_VALUE', /* required */
+  OutputUri: 'STRING_VALUE', /* required */
+  BatchPredictionName: 'STRING_VALUE'
+};
+machinelearning.createBatchPrediction(params, function(err, data) {
+  if (err) console.log(err, err.stack); // an error occurred
+  else     console.log(data);           // successful response
+});
+
+// Step 6: Clean Up
